@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KansoVerse - Explore Anime, Movies & TV Shows</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Landing Portal Hero Area (Visible by default) -->
+  <header class="landing-hero" id="landing-hero">
+    <div class="hero-video-container">
+      <video 
+        class="hero-banner-video" 
+        autoplay 
+        muted 
+        loop 
+        playsinline
+        poster="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1600&auto=format&fit=crop">
+        <!-- Direct MP4 link (Replace with any hosted trailer/cinematic clip) -->
+        <source src="assets/hero-trailer-clip-3.mp4" type="video/mp4">
+      </video>
+      <!-- Vignette Gradient Layer to fade video smoothly into the dark theme -->
+      <div class="hero-video-overlay"></div>
+    </div>
+
+    <div class="hero-card">
+      <!-- Left Column: Search & Quick Actions -->
+      <div class="hero-left">
+        <div class="brand">
+          <h1 class="logo">Kanso<span>Verse</span></h1>
+        </div>
+
+        <form id="hero-search-form" class="hero-search-bar">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="search" 
+            id="hero-search-input" 
+            placeholder="Search anime, movies, TV shows..." 
+            autocomplete="off" 
+            required 
+          />
+          <button type="submit" id="hero-search-btn">Search</button>
+        </form>
+
+        <div class="popular-searches">
+          <span class="popular-label">Popular searches:</span>
+          <div class="popular-tags" id="popular-tags">
+            <button type="button" class="tag-link">Bleach</button>
+            <button type="button" class="tag-link">One Piece</button>
+            <button type="button" class="tag-link">Interstellar</button>
+            <button type="button" class="tag-link">Jujutsu Kaisen</button>
+            <button type="button" class="tag-link">Severance</button>
+          </div>
+        </div>
+
+        <button type="button" id="explore-btn" class="action-btn">
+          Explore Catalog &rarr;
+        </button>
+      </div>
+
+      <!-- Right Column: Info & FAQ -->
+      <div class="hero-right">
+        <h2>KansoVerse - Pure Media Discovery</h2>
+        <p>
+          KansoVerse brings together Japanese anime, cinema, and television in a single clean portal.
+          Browse verified community ratings, official trailers, and synopses without clutter or noise.
+        </p>
+
+        <h3>Is KansoVerse free to use?</h3>
+        <p>
+          Completely free. Powered by open community data directly from TMDB and MyAnimeList via the Jikan API.
+        </p>
+
+        <h3>Key Highlights</h3>
+        <ul class="features-list">
+          <li><strong>Unified Search:</strong> Explore anime and mainstream media in one place.</li>
+          <li><strong>Instant Trailers:</strong> Watch high-definition YouTube trailers directly in-modal.</li>
+          <li><strong>Fast & Private:</strong> 100% client-side performance with zero tracking or accounts required.</li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sticky Compact Navbar (Appears in Search Mode) -->
+  <nav id="compact-nav" class="compact-nav hidden">
+    <div class="nav-left">
+      <h1 class="logo-compact" id="nav-logo">Kanso<span>Verse</span></h1>
+    </div>
+    
+    <form id="compact-search-form" class="compact-search-bar">
+      <span class="search-icon">🔍</span>
+      <input 
+        type="search" 
+        id="compact-search-input" 
+        placeholder="Search anime, movies, TV..." 
+        autocomplete="off" 
+        required 
+      />
+    </form>
+
+    <div class="filter-group" aria-label="Media Filters">
+      <button type="button" class="filter-btn active" data-type="all">All</button>
+      <button type="button" class="filter-btn" data-type="movie">Movies</button>
+      <button type="button" class="filter-btn" data-type="tv">TV Shows</button>
+      <button type="button" class="filter-btn" data-type="anime">Anime</button>
+    </div>
+  </nav>
+
+  <!-- Results Section -->
+  <main id="browse-section" class="main-container">
+    <div id="status-message" class="status-message hidden">
+      Search for a title above to see trailers and details.
+    </div>
+
+    <!-- Cards injected here via JS -->
+    <section id="results-grid" class="results-grid" aria-live="polite">
+      <!-- <article class="media-card" data-id="41467" data-type="anime">
+        <img 
+          class="card-poster" 
+          src="https://cdn.myanimelist.net/images/anime/1764/126627.jpg" 
+          alt="Bleach: Thousand-Year Blood War Poster" 
+          loading="lazy"
+        />
+        <div class="card-info">
+          <h2 class="card-title">Bleach: Sennen Kessen-hen</h2>
+          <p class="card-meta">2022 • Anime</p>
+        </div>
+      </article> -->
+    </section>
+  </main>
+
+  <!-- Detail & Trailer Modal -->
+  <dialog id="detail-modal" class="modal">
+    <div class="modal-content">
+      <button id="close-detail-btn" class="close-btn" aria-label="Close dialog">&times;</button>
+      
+      <div class="media-details">
+        <div class="poster-container">
+          <img id="modal-poster" src="" alt="Media Poster">
+        </div>
+        
+        <div class="metadata">
+          <h2 id="modal-title"></h2>
+          <p id="modal-native-title" class="native-title"></p>
+          
+          <div class="tags-row">
+            <span id="modal-year" class="tag"></span>
+            <span id="modal-type" class="tag"></span>
+            <span id="modal-status" class="tag"></span>
+            <span id="modal-duration" class="tag"></span>
+          </div>
+
+          <div class="rating-box">
+            <span class="rating-icon">★</span>
+            <span id="modal-rating" class="rating-score">--</span>
+            <span id="modal-votes" class="rating-count">(0 votes)</span>
+          </div>
+
+          <div id="modal-genres" class="genres-row"></div>
+          <p id="modal-overview" class="overview-text"></p>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <section id="trailer-section" class="trailer-section">
+        <h3>Official Trailer</h3>
+        <div class="video-wrapper">
+          <iframe 
+            id="trailer-iframe" 
+            src="" 
+            title="Official Trailer" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+        </div>
+        <p id="no-trailer-msg" class="empty-trailer-msg hidden">No official trailer available for this title.</p>
+      </section>
+    </div>
+  </dialog>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
