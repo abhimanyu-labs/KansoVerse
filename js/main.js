@@ -74,3 +74,27 @@ exploreCatalogBtn.addEventListener('click', () => {
 navbarLogoEl.addEventListener('click', () => {
   resetLandingMode();
 })
+
+async function searchAnime(query) {
+  if (!query || !query.trim()) return [];
+
+  try {
+    const response = await fetch(
+      `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query.trim())}&limit=20`
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const results = data.data || [];
+    console.log('Jikan Raw Results:', results);
+    return results;
+  } catch (err) {
+    console.error('Fetch failed:', err);
+    return [];
+  }
+}
+
+searchAnime('naruto');
