@@ -103,22 +103,22 @@
     </div>
 
     <!-- Dual Filter Controls -->
-    <div class="filters-container">
+    <div class="filters-container js-filters-container">
       <!-- Option A: Format Filters -->
       <div class="filter-group" id="format-filter-group" aria-label="Format Filters">
         <span class="filter-label">Format:</span>
-        <button type="button" class="filter-btn active" data-filter-type="format" data-value="all">All</button>
-        <button type="button" class="filter-btn" data-filter-type="format" data-value="tv">TV Series</button>
-        <button type="button" class="filter-btn" data-filter-type="format" data-value="movie">Movies</button>
-        <button type="button" class="filter-btn" data-filter-type="format" data-value="special">OVA / Special</button>
+        <button type="button" class="filter-btn js-filter-btn active" data-filter-type="format" data-value="all">All</button>
+        <button type="button" class="filter-btn js-filter-btn" data-filter-type="format" data-value="tv">TV Series</button>
+        <button type="button" class="filter-btn js-filter-btn" data-filter-type="format" data-value="movie">Movies</button>
+        <button type="button" class="filter-btn js-filter-btn" data-filter-type="format" data-value="special">OVA / Special</button>
       </div>
 
       <!-- Option B: Status Filters -->
       <div class="filter-group" id="status-filter-group" aria-label="Status Filters">
         <span class="filter-label">Status:</span>
-        <button type="button" class="filter-btn active" data-filter-type="status" data-value="all">All</button>
-        <button type="button" class="filter-btn" data-filter-type="status" data-value="currently airing">Airing</button>
-        <button type="button" class="filter-btn" data-filter-type="status" data-value="finished airing">Finished</button>
+        <button type="button" class="filter-btn js-filter-btn active" data-filter-type="status" data-value="all">All</button>
+        <button type="button" class="filter-btn js-filter-btn" data-filter-type="status" data-value="currently airing">Airing</button>
+        <button type="button" class="filter-btn js-filter-btn" data-filter-type="status" data-value="finished airing">Finished</button>
       </div>
     </div>
   </nav>
@@ -170,7 +170,7 @@
 
       <section id="trailer-section" class="trailer-section">
         <h3>Official Trailer</h3>
-        <div class="video-wrapper">
+        <div class="video-wrapper js-video-wrapper">
           <iframe 
             id="trailer-iframe" 
             src="" 

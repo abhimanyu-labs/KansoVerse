@@ -22,8 +22,31 @@ const popularTagsEl = document.getElementById('popular-tags');
 
 const exploreCatalogBtn = document.getElementById('explore-btn');
 const statusEl = document.getElementById('status-message');
-const filtersContainerEl = document.querySelector('.filters-container');
+const filtersContainerEl = document.querySelector('.js-filters-container');
 const resultsGridEl = document.getElementById('results-grid');
+
+const detailModalEl = document.getElementById('detail-modal');
+const closeDetailBtn = document.getElementById('close-detail-btn');
+
+const modalPosterEl = document.getElementById('modal-poster');
+const modalTitleEl = document.getElementById('modal-title');
+const modalNativeTitleEl = document.getElementById('modal-native-title');
+
+const modalYearEl = document.getElementById('modal-year');
+const modalTypeEl = document.getElementById('modal-type');
+const modalStatusEl = document.getElementById('modal-status');
+const modalDurationEl = document.getElementById('modal-duration');
+
+const modalRatingEl = document.getElementById('modal-rating');
+const modalVotesEl = document.getElementById('modal-votes');
+
+const modalGenresEl = document.getElementById('modal-genres');
+const modalOverviewEl = document.getElementById('modal-overview');
+
+const trailerIframeEl = document.getElementById('trailer-iframe');
+const trailerSectionEl = document.getElementById('trailer-section');
+const videoWrapperEl = document.querySelector('.js-video-wrapper');
+const noTrailerMsgEl = document.getElementById('no-trailer-msg');
 
 class MediaItem {
   constructor() {
@@ -48,7 +71,7 @@ class AnimeItem extends MediaItem {
     super();
     this.id = raw.mal_id;
     this.title = raw.title_english || raw.title || 'Unknown Title';
-    this.nativeTitle = raw.title_japanese || '';
+    this.nativeTitle = raw.title_japanese || 'Unknown Title';
     
     // Check raw.year, fall back to aired prop year or parsed date
     this.year = raw.year || raw.aired?.prop?.from?.year || (raw.aired?.from ? new Date(raw.aired.from).getFullYear() : 'N/A');
@@ -90,7 +113,7 @@ function resetLandingMode() {
   showStatus(false);
   state.activeFilters.format = 'all';
   state.activeFilters.status = 'all';
-  document.querySelectorAll('.filter-btn').forEach(btn => {
+  document.querySelectorAll('.js-filter-btn').forEach(btn => {
     if (btn.dataset.value === 'all') {
       btn.classList.add('active');
     } else {
@@ -151,6 +174,21 @@ filtersContainerEl.addEventListener('click', event => {
   }
 })
 
+resultsGridEl.addEventListener('click', event => {
+  if (event.target.closest('.media-card')) {
+    const mediaCardEl = event.target.closest('.media-card');
+    const { id } = mediaCardEl.dataset;
+    const matchingMediaItem = state.results.find(mediaItem => Number(id) === mediaItem.id);
+    if (!matchingMediaItem) {
+      return;
+    }
+    openMediaModal(matchingMediaItem);
+  }
+});
+
+closeDetailBtn.addEventListener('click', () => {
+  closeMediaModal();
+})
 
 function showStatus(isVisible, message) {
   if (isVisible) {
@@ -243,3 +281,57 @@ function getFilteredResults() {
     return matchingFormat && matchingStatus;
   })
 }
+
+function openMediaModal(mediaItem) {
+  const {poster, title, nativeTitle, year, type, status, duration, rating, votes, genres, overview, trailerYoutubeId} = mediaItem;
+
+  modalPosterEl.src = poster;
+  modalTitleEl.textContent = title;
+  modalNativeTitleEl.textContent = nativeTitle;
+  modalYearEl.textContent = year;
+  modalTypeEl.textContent = type;
+  modalStatusEl.textContent = status;
+  modalDurationEl.textContent = duration;
+  modalRatingEl.textContent = rating;
+  modalVotesEl.textContent = votes;
+  modalOverviewEl.textContent = overview;
+
+  modalGenresEl.innerHTML = genres
+    .map(genre => `<span class="genre-pill">${genre}</span>`)
+    .join('');
+
+  if (trailerYoutubeId) {
+    trailerIframeEl.src = `https://www.youtube-nocookie.com/embed/${trailerYoutubeId}?autoplay=1`;
+    videoWrapperEl.classList.remove('hidden');
+    noTrailerMsgEl.classList.add('hidden');
+  } else {
+    trailerIframeEl.src = '';
+    videoWrapperEl.classList.add('hidden');
+    noTrailerMsgEl.classList.remove('hidden');
+  }
+
+  detailModalEl.showModal();
+}
+
+function closeMediaModal() {
+  detailModalEl.close();
+  trailerIframeEl.src = '';
+}
+
+detailModalEl.addEventListener('cancel', () => {
+  trailerIframeEl.src = '';
+});
+
+detailModalEl.addEventListener('click', (event) => {
+  const rect = detailModalEl.getBoundingClientRect();
+  const clickedInDialog = (
+    event.clientX >= rect.left &&
+    event.clientX <= rect.right &&
+    event.clientY >= rect.top &&
+    event.clientY <= rect.bottom
+  );
+
+  if (!clickedInDialog) {
+    closeMediaModal();
+  }
+});
