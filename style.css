@@ -331,7 +331,7 @@ body.is-searching .landing-hero {
   background-color: var(--bg-input);
   border: 1px solid var(--border-subtle);
   border-radius: 999px;
-  padding: 0.45rem 1.15rem;
+  padding: 0.3rem 0.35rem 0.3rem 1rem;
   transition: border-color var(--transition-fast);
 }
 
@@ -346,6 +346,21 @@ body.is-searching .landing-hero {
   outline: none;
   font-size: 0.9rem;
   color: var(--text-primary);
+}
+
+.compact-search-btn {
+  padding: 0.45rem 1rem;
+  background-color: var(--accent-primary);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 999px;
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast);
+}
+
+.compact-search-btn:hover {
+  background-color: var(--accent-primary-hover);
 }
 
 .filters-container {
