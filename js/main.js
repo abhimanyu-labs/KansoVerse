@@ -335,3 +335,8 @@ detailModalEl.addEventListener('click', (event) => {
     closeMediaModal();
   }
 });
+
+
+document.querySelector('.hero-video-container').addEventListener('contextmenu', event => {
+  event.preventDefault();
+})
