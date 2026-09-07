@@ -70,7 +70,7 @@
 
         <h3>Is KansoVerse free to use?</h3>
         <p>
-          Completely free. Powered by open community data directly from TMDB and MyAnimeList via the Jikan API.
+          Completely free. Powered by open community data directly from MyAnimeList via the Tenrai API.
         </p>
 
         <h3>Key Highlights</h3>
@@ -85,49 +85,52 @@
 
   <!-- Sticky Compact Navbar (Appears in Search Mode) -->
   <nav id="compact-nav" class="compact-nav hidden">
-    <div class="nav-left">
-      <h1 class="logo-compact" id="nav-logo">Kanso<span>Verse</span></h1>
+    <div class="nav-top-row">
+      <div class="nav-left">
+        <h1 class="logo-compact" id="nav-logo">Kanso<span>Verse</span></h1>
+      </div>
+      
+      <form id="compact-search-form" class="compact-search-bar">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="search" 
+          id="compact-search-input" 
+          placeholder="Search anime titles..." 
+          autocomplete="off" 
+          required 
+        />
+      </form>
     </div>
-    
-    <form id="compact-search-form" class="compact-search-bar">
-      <span class="search-icon">🔍</span>
-      <input 
-        type="search" 
-        id="compact-search-input" 
-        placeholder="Search anime, movies, TV..." 
-        autocomplete="off" 
-        required 
-      />
-    </form>
 
-    <div class="filter-group" aria-label="Media Filters">
-      <button type="button" class="filter-btn active" data-type="all">All</button>
-      <button type="button" class="filter-btn" data-type="movie">Movies</button>
-      <button type="button" class="filter-btn" data-type="tv">TV Shows</button>
-      <button type="button" class="filter-btn" data-type="anime">Anime</button>
+    <!-- Dual Filter Controls -->
+    <div class="filters-container">
+      <!-- Option A: Format Filters -->
+      <div class="filter-group" id="format-filter-group" aria-label="Format Filters">
+        <span class="filter-label">Format:</span>
+        <button type="button" class="filter-btn active" data-filter-type="format" data-value="all">All</button>
+        <button type="button" class="filter-btn" data-filter-type="format" data-value="tv">TV Series</button>
+        <button type="button" class="filter-btn" data-filter-type="format" data-value="movie">Movies</button>
+        <button type="button" class="filter-btn" data-filter-type="format" data-value="special">OVA / Special</button>
+      </div>
+
+      <!-- Option B: Status Filters -->
+      <div class="filter-group" id="status-filter-group" aria-label="Status Filters">
+        <span class="filter-label">Status:</span>
+        <button type="button" class="filter-btn active" data-filter-type="status" data-value="all">All</button>
+        <button type="button" class="filter-btn" data-filter-type="status" data-value="currently airing">Airing</button>
+        <button type="button" class="filter-btn" data-filter-type="status" data-value="finished airing">Finished</button>
+      </div>
     </div>
   </nav>
 
   <!-- Results Section -->
   <main id="browse-section" class="main-container">
-    <div id="status-message" class="status-message hidden">
-      Search for a title above to see trailers and details.
-    </div>
+    <div id="status-message" class="status-message">
+</div>
 
     <!-- Cards injected here via JS -->
     <section id="results-grid" class="results-grid" aria-live="polite">
-      <!-- <article class="media-card" data-id="41467" data-type="anime">
-        <img 
-          class="card-poster" 
-          src="https://cdn.myanimelist.net/images/anime/1764/126627.jpg" 
-          alt="Bleach: Thousand-Year Blood War Poster" 
-          loading="lazy"
-        />
-        <div class="card-info">
-          <h2 class="card-title">Bleach: Sennen Kessen-hen</h2>
-          <p class="card-meta">2022 • Anime</p>
-        </div>
-      </article> -->
+      
     </section>
   </main>
 

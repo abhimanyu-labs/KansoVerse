@@ -1,8 +1,13 @@
 const state = {
   query: '',
-  activeFilter: 'all',
+  activeFilters: {
+    format: 'all',
+    status: 'all'
+  },
   results: []
 }
+
+let isCatalog = false;
 
 const bodyEl = document.body;
 
@@ -16,7 +21,8 @@ const navbarLogoEl = document.getElementById('nav-logo');
 const popularTagsEl = document.getElementById('popular-tags');
 
 const exploreCatalogBtn = document.getElementById('explore-btn');
-
+const statusEl = document.getElementById('status-message');
+const filtersContainerEl = document.querySelector('.filters-container');
 const resultsGridEl = document.getElementById('results-grid');
 
 class MediaItem {
@@ -47,7 +53,8 @@ class AnimeItem extends MediaItem {
     // Check raw.year, fall back to aired prop year or parsed date
     this.year = raw.year || raw.aired?.prop?.from?.year || (raw.aired?.from ? new Date(raw.aired.from).getFullYear() : 'N/A');
     this.type = 'anime';
-    
+    this.format = (raw.type || 'unknown').toLowerCase();
+
     // Use WebP high-res if available, fall back to JPG
     this.poster = raw.images?.webp?.large_image_url || raw.images?.jpg?.large_image_url || '';
     
@@ -68,7 +75,7 @@ function enterSearchMode(query) {
   state.query = query;
   bodyEl.classList.add('is-searching');
   navbarEl.classList.remove('hidden');
-  compactSearchInputEl.value = query;
+  compactSearchInputEl.value = isCatalog ? '' : query;
   window.scrollTo({ top: 0, behavior: 'instant'});
 }
 
@@ -78,9 +85,19 @@ function resetLandingMode() {
   compactSearchInputEl.value = '';
   heroSearchInputEl.value = '';
   state.query = '';
-  state.activeFilter = 'all';
   state.results = [];
   resultsGridEl.innerHTML = '';
+  showStatus(false);
+  state.activeFilters.format = 'all';
+  state.activeFilters.status = 'all';
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    if (btn.dataset.value === 'all') {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  })
+
 }
 
 heroSearchFormEl.addEventListener('submit', event => {
@@ -89,7 +106,7 @@ heroSearchFormEl.addEventListener('submit', event => {
   if (!query) {
     return;
   }
-  enterSearchMode(query);
+  executeSearch(query);
 })
 
 compactSearchFormEl.addEventListener('submit', event => {
@@ -98,7 +115,7 @@ compactSearchFormEl.addEventListener('submit', event => {
   if (!query) {
     return;
   }
-  enterSearchMode(query);
+  executeSearch(query);
 })
 
 popularTagsEl.addEventListener('click', event => {
@@ -108,24 +125,49 @@ popularTagsEl.addEventListener('click', event => {
     if (!query) {
       return;
     }
-    enterSearchMode(query);
+    executeSearch(query);
   }
 })
 
 exploreCatalogBtn.addEventListener('click', () => {
-  enterSearchMode('');
+  isCatalog = true;
+  executeSearch('top');
 })
 
 navbarLogoEl.addEventListener('click', () => {
   resetLandingMode();
 })
 
+filtersContainerEl.addEventListener('click', event => {
+  if (event.target.classList.contains('filter-btn')) {
+    const filterBtn = event.target;
+    const {filterType, value} = filterBtn.dataset;
+    const previousActiveBtn = filterBtn.parentElement.querySelector('.active');
+    previousActiveBtn.classList.remove('active');
+    filterBtn.classList.add('active');
+    state.activeFilters[filterType] = value;
+    const visibleItems = getFilteredResults();
+    renderGrid(visibleItems);
+  }
+})
+
+
+function showStatus(isVisible, message) {
+  if (isVisible) {
+    statusEl.textContent = message;
+    statusEl.classList.remove('hidden');
+  } else {
+    statusEl.classList.add('hidden');
+    statusEl.textContent = '';
+  }
+}
+
 async function searchAnime(query) {
   if (!query || !query.trim()) return [];
-
+  const searchString = isCatalog ? '' : `q=${encodeURIComponent(query.trim())}&`;
   try {
     const response = await fetch(
-      `https://api.tenrai.org/v1/anime?q=${encodeURIComponent(query.trim())}&limit=20`
+      `https://api.tenrai.org/v1/anime?${searchString}limit=20`
     );
 
     if (!response.ok) {
@@ -137,13 +179,67 @@ async function searchAnime(query) {
     
     // Normalize into uniform AnimeItem instances
     const normalized = rawList.map(item => new AnimeItem(item));
-    console.log(normalized);
     return normalized;
   } catch (err) {
-    console.error('Fetch failed:', err);
+    showStatus(true, `Fetch failed: ${err}`);
     return [];
   }
 }
 
-window.searchAnime = searchAnime;
-console.log('main.js loaded successfully!');
+function renderGrid(items) {
+  resultsGridEl.innerHTML = '';
+  if (!items.length) {
+    showStatus(true, 'No results found matching your criteria.')
+    return;
+  }
+  const html = items.map(item => createMediaCard(item)).join('');
+  showStatus(false);
+  resultsGridEl.innerHTML = html;
+}
+
+function createMediaCard(item) {
+  const fallbackUrl = "https://placehold.co/300x450/1e2534/5e6b82?text=No+Poster";
+  const posterSrc = item.poster || fallbackUrl;
+  const html =`
+    <article class="media-card" data-id="${item.id}" data-trailer="${item.trailerYoutubeId || ''}">
+      <img 
+        class="card-poster" 
+        src="${posterSrc}" 
+        alt="${item.title}" 
+        loading="lazy" 
+        onerror="this.onerror=null; this.src='${fallbackUrl}';"
+      />
+      <div class="card-info">
+        <h2 class="card-title">${item.title}</h2>
+        <p class="card-meta">${item.year} • ${item.type}</p>
+      </div>
+    </article>`;
+  return html;
+}
+
+async function executeSearch(query) {
+  enterSearchMode(query);
+  resultsGridEl.innerHTML = '';
+  showStatus(true, 'Searching titles...');
+  state.results = await searchAnime(query);
+  renderGrid(getFilteredResults());
+  if (isCatalog) {
+    isCatalog = false;
+  }
+}
+
+function getFilteredResults() {
+  return state.results.filter(item => {
+    const matchingFormat = state.activeFilters.format === 'all'
+      ? true
+      : state.activeFilters.format === 'special'
+        ? ['special', 'ova', 'tv special', 'pv'].includes(item.format)
+        : item.format === state.activeFilters.format;
+
+    const matchingStatus = state.activeFilters.status === 'all'
+      ? true
+        : item.status.toLowerCase() === state.activeFilters.status.toLowerCase(); 
+
+    return matchingFormat && matchingStatus;
+  })
+}
