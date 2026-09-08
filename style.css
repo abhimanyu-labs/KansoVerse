@@ -151,10 +151,11 @@ input {
 .hero-search-bar {
   display: flex;
   align-items: center;
+  width: 100%;
   background-color: var(--bg-input);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 0.35rem 0.5rem 0.35rem 1rem;
+  padding: 0.35rem 0.4rem 0.35rem 0.85rem;
   transition: border-color var(--transition-fast);
 }
 
@@ -170,15 +171,17 @@ input {
 
 .hero-search-bar input {
   flex: 1;
+  min-width: 0; /* allows input to shrink on narrow mobile screens */
   background: transparent;
   border: none;
   color: var(--text-primary);
   outline: none;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .hero-search-bar button {
-  padding: 0.65rem 1.2rem;
+  flex-shrink: 0; /* prevents the search button from compressing */
+  padding: 0.6rem 1rem;
   background-color: var(--accent-primary);
   color: #ffffff;
   font-weight: 600;
@@ -722,5 +725,18 @@ body.is-searching .main-container {
   .results-grid {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 1rem;
+  }
+  
+  .landing-hero {
+    padding: 1.5rem 0.75rem 2.5rem;
+  }
+
+  .hero-card {
+    padding: 1.25rem;
+    width: 100%;
+  }
+
+  .hero-right {
+    padding-top: 1rem;
   }
 }
