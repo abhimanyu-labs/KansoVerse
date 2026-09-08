@@ -42,6 +42,7 @@ const modalVotesEl = document.getElementById('modal-votes');
 
 const modalGenresEl = document.getElementById('modal-genres');
 const modalOverviewEl = document.getElementById('modal-overview');
+const overviewToggleBtn = document.getElementById('overview-toggle-btn');
 
 const trailerIframeEl = document.getElementById('trailer-iframe');
 const trailerSectionEl = document.getElementById('trailer-section');
@@ -296,6 +297,16 @@ function openMediaModal(mediaItem) {
   modalVotesEl.textContent = votes;
   modalOverviewEl.textContent = overview;
 
+  modalOverviewEl.classList.add('collapsed');
+
+  if (overview && overview.length > 200) {
+    overviewToggleBtn.textContent = 'Read More';
+    overviewToggleBtn.classList.remove('hidden');
+  } else {
+    modalOverviewEl.classList.remove('collapsed');
+    overviewToggleBtn.classList.add('hidden');
+  }
+
   modalGenresEl.innerHTML = genres
     .map(genre => `<span class="genre-pill">${genre}</span>`)
     .join('');
@@ -339,4 +350,9 @@ detailModalEl.addEventListener('click', (event) => {
 
 document.querySelector('.hero-video-container').addEventListener('contextmenu', event => {
   event.preventDefault();
+})
+
+overviewToggleBtn.addEventListener('click', () => {
+  const isCollapsed = modalOverviewEl.classList.toggle('collapsed');
+  overviewToggleBtn.textContent = isCollapsed ? 'Read more' : 'Read less';
 })

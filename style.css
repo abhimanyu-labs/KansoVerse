@@ -631,6 +631,32 @@ body.is-searching .main-container {
   margin-top: 0.25rem;
 }
 
+.overview-text.collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.read-more-btn {
+  background: none;
+  border: none;
+  color: var(--accent-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0;
+  margin-top: 0.35rem;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: color var(--transition-fast);
+}
+
+.read-more-btn:hover {
+  color: var(--accent-primary-hover);
+  text-decoration: underline;
+}
+
 /* 16:9 Trailer */
 .trailer-section h3 {
   font-size: 1.1rem;
@@ -726,7 +752,7 @@ body.is-searching .main-container {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 1rem;
   }
-  
+
   .landing-hero {
     padding: 1.5rem 0.75rem 2.5rem;
   }
